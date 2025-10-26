@@ -7,42 +7,51 @@ const ContactActions = ({
   onDeselectAll,
   onDeleteSelected,
 }) => {
+  const allSelected =
+    filteredContacts.length > 0 &&
+    selectedContacts.length === filteredContacts.length;
+
   return (
-    <div className="flex flex-col sm:flex-row gap-2 mb-4">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+      
       <input
         type="text"
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="border p-2 rounded-lg flex-1"
+        className="border p-2 rounded-lg w-full sm:w-auto flex-1"
       />
 
-      {selectedContacts.length > 0 && (
-        <div className="flex gap-2">
-          <button
-            onClick={onDeleteSelected}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-          >
-            Delete ({selectedContacts.length})
-          </button>
-          <button
-            onClick={onDeselectAll}
-            className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
-          >
-            Deselect All
-          </button>
-        </div>
-      )}
+      
+      <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
+        {filteredContacts.length > 0 && (
+          <>
+            
+            <button
+              onClick={() =>
+                allSelected ? onDeselectAll() : onSelectAll(filteredContacts)
+              }
+              className={`px-4 py-2 rounded-lg ${
+                allSelected
+                  ? "bg-gray-400 text-white hover:bg-gray-500"
+                  : "bg-green-600 text-white hover:bg-green-700"
+              }`}
+            >
+              {allSelected ? "Deselect All" : "Select All"}
+            </button>
 
-      {selectedContacts.length < filteredContacts.length &&
-        filteredContacts.length > 0 && (
-          <button
-            onClick={onSelectAll}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-          >
-            Select All
-          </button>
+          
+            {selectedContacts.length > 0 && (
+              <button
+                onClick={onDeleteSelected}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+              >
+                Delete Selected ({selectedContacts.length})
+              </button>
+            )}
+          </>
         )}
+      </div>
     </div>
   );
 };

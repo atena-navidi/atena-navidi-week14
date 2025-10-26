@@ -5,16 +5,28 @@ import { initialContacts } from "../data/initialContacts";
 const initialContact = { name: "", lastName: "", email: "", phone: "" };
 
 
-const getInitialContacts = () => {
+ const getInitialContacts = () => {
   const saved = localStorage.getItem("contacts");
-  if (saved && JSON.parse(saved).length > 0) {
-    return JSON.parse(saved);
+
+  if (saved) {
+    const parsed = JSON.parse(saved);
+
+    
+    if (Array.isArray(parsed) && parsed.length === 0) {
+      return []; 
+    }
+
+    return parsed; 
   }
 
+  
+  localStorage.setItem("contacts", JSON.stringify(initialContacts));
   return initialContacts;
 };
 
-export function useContacts() {
+export const useContacts = () => {
+  
+  
   const [contacts, setContacts] = useState(getInitialContacts());
   const [contact, setContact] = useState(initialContact);
   const [query, setQuery] = useState("");
@@ -24,31 +36,37 @@ export function useContacts() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [contactToDelete, setContactToDelete] = useState(null);
 
+  
   const updateContacts = (newContacts) => {
     setContacts(newContacts);
     localStorage.setItem("contacts", JSON.stringify(newContacts));
   };
 
+  
   const toggleSelect = (id) => {
     setSelectedContacts((prev) =>
       prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
     );
   };
 
-  const selectAll = (list) => {
-    setSelectedContacts(list.map((c) => c.id));
+  
+  const selectAll = (contactsToSelect) => {
+    setSelectedContacts(contactsToSelect.map((c) => c.id));
   };
 
+  
   const deselectAll = () => {
     setSelectedContacts([]);
   };
 
+  
   const changeHandler = (event) => {
     const { name, value } = event.target;
     setContact((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  
   const validateForm = () => {
     const newErrors = {};
     if (!contact.name.trim()) newErrors.name = "Name is required";
@@ -64,6 +82,7 @@ export function useContacts() {
     return Object.keys(newErrors).length === 0;
   };
 
+  
   const closeFormHandler = () => {
     setIsFormOpen(false);
     setEditingContactId(null);
@@ -71,6 +90,7 @@ export function useContacts() {
     setErrors({});
   };
 
+  
   const saveHandler = () => {
     if (!validateForm()) return;
 
@@ -93,7 +113,9 @@ export function useContacts() {
 
     if (editingContactId) {
       const updatedList = contacts.map((item) =>
-        item.id === editingContactId ? { ...contact, id: editingContactId } : item
+        item.id === editingContactId
+          ? { ...contact, id: editingContactId }
+          : item
       );
       updateContacts(updatedList);
     } else {
@@ -104,6 +126,7 @@ export function useContacts() {
     closeFormHandler();
   };
 
+  
   const editHandler = (contactToEdit) => {
     setErrors({});
     setIsFormOpen(true);
@@ -111,10 +134,12 @@ export function useContacts() {
     setContact(contactToEdit);
   };
 
+
   const deleteHandler = (contact) => {
     setContactToDelete(contact);
   };
 
+  
   const confirmDelete = () => {
     const updatedList = contacts.filter((c) =>
       Array.isArray(contactToDelete)
@@ -122,10 +147,11 @@ export function useContacts() {
         : c.id !== contactToDelete.id
     );
     updateContacts(updatedList);
-    deselectAll();
+    setSelectedContacts([]);
     setContactToDelete(null);
   };
 
+   
   const filteredContacts = contacts.filter((c) =>
     `${c.name} ${c.lastName} ${c.email} ${c.phone}`
       .toLowerCase()
@@ -133,27 +159,26 @@ export function useContacts() {
   );
 
   return {
-    contacts,
     contact,
-    query,
-    selectedContacts,
-    editingContactId,
     errors,
+    query,
+    setQuery,
+    filteredContacts,
+    selectedContacts,
     isFormOpen,
     contactToDelete,
-    setQuery,
+    editingContactId,
     toggleSelect,
     selectAll,
     deselectAll,
-    changeHandler,
-    closeFormHandler,
-    saveHandler,
-    editHandler,
     deleteHandler,
+    editHandler,
     confirmDelete,
     setIsFormOpen,
     setErrors,
     setContactToDelete,
-    filteredContacts,
+    closeFormHandler,
+    saveHandler,
+    changeHandler, 
   };
-}
+};

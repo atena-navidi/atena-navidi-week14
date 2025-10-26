@@ -1,3 +1,5 @@
+//FormModal.jsx
+
 const FormModal = ({ title, contact, inputs, errors, onChange, onCancel, onSave }) => {
   return (
     <div
@@ -43,4 +45,7 @@ const FormModal = ({ title, contact, inputs, errors, onChange, onCancel, onSave 
   );
 };
 
-export default FormModal;
+export default FormModal;   
+
+
+

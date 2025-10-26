@@ -33,6 +33,7 @@ const Contacts = () => {
     setContactToDelete,
     closeFormHandler,
     saveHandler,
+    changeHandler,
   } = useContacts();
 
   return (
@@ -43,7 +44,7 @@ const Contacts = () => {
           contact={contact}
           inputs={inputs}
           errors={errors}
-          onChange={(_, e) => e.preventDefault()}
+          onChange={changeHandler}
           onCancel={closeFormHandler}
           onSave={saveHandler}
         />
@@ -68,7 +69,7 @@ const Contacts = () => {
           setQuery={setQuery}
           selectedContacts={selectedContacts}
           filteredContacts={filteredContacts}
-          onSelectAll={() => selectAll(filteredContacts)}
+          onSelectAll={selectAll}
           onDeselectAll={deselectAll}
           onDeleteSelected={() => setContactToDelete(selectedContacts)}
         />
